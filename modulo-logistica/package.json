@@ -1,0 +1,31 @@
+{
+  "name": "modulo-logistica",
+  "version": "1.0.0",
+  "description": "Modulo para implementar os servicos de api de logistica",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/artureiji/syndo-logistika.git"
+  },
+  "keywords": [
+    "mc851",
+    "mc857",
+    "rastreio-correios"
+  ],
+  "author": "murilolcruz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/artureiji/syndo-logistika/issues"
+  },
+  "homepage": "https://github.com/artureiji/syndo-logistika#readme",
+  "devDependencies": {
+    "nodemon": "^1.17.3"
+  },
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
