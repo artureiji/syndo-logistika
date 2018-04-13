@@ -1,9 +1,22 @@
 'use strict';
 
-database = require('../services/database');
+const database = require('../services/database');
 
-exports.entrega = function(req, res) {
+exports.rastrear = function(req, res) {
     database.dbConnection(banco => {
-        banco.get("SELECT * FROM Rastreio where codigo = ? ORDER BY codigo;", [req.params.codigoRastreio], (err, row) => res.send(row));
+        banco.all("SELECT * FROM Rastreio where codigo = ? ORDER BY data desc;", [req.params.codigoRastreio],
+            (err, rows) => res.send(
+                {
+                    status: "ok",
+                    historicoRastreio: rows.map(row =>
+                        ({
+                            hora: new Date(row.data).toISOString(),
+                            local: row.endereco,
+                            mensagem: row.mensagem
+                        })
+                    )
+                }
+            )
+        );
     });
 };
