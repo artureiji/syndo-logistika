@@ -46,7 +46,7 @@ function precoSedex() {
 function determinaPreco(tipo, distancia, quantidade, peso, formato, volume) {
     let fator = tipo == 1 ? precoPac() : tipo == 2 ? precoSedex() : 0;
 
-    let preco = fator * distancia * peso * volume * (quantidade * 0.7);
+    let preco = fator * distancia * peso * volume * (quantidade * ((quantidade - 1) * 0.7));
 
     return preco;
 }
