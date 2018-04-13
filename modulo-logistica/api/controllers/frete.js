@@ -2,7 +2,7 @@
 
 database = require('../services/database');
 
-exports.rastrear = function(req, res) {
+exports.calcular = function(req, res) {
     database.dbConnection(banco => {    
         res.send("Hello!");
     });  
