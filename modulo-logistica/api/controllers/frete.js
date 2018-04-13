@@ -6,11 +6,14 @@ exports.calcular = function(req, res) {
     let valor = 0;
     console.log(req);
 
-    let distancia = calcularDistancia(req.params.ceporigem, req.params.cepdestino);
-    let volume = calcularVolume(req.params.formato, req.params.comprimento, req.params.altura, req.params.largura, req.params.diametro);
+    let {tipo, ceporigem, cepdestino, quantidade, peso, formato, comprimento, altura, largura, diametro} = req.query;
 
-    valor = determinaPreco(req.params.tipo, distancia, req.params.quantidade, req.params.peso, req.params.formato, volume);
-    res.send(valor);
+    let distancia = calcularDistancia(ceporigem, cepdestino);
+    let volume = calcularVolume(formato, comprimento, altura, largura, diametro);
+
+    valor = determinaPreco(tipo, distancia, quantidade, peso, formato, volume);
+    
+    res.send(valor.toFixed(2).toString());
 };
 
 function calcularDistancia(cepOrigem, cepDestino) {
