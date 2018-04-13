@@ -21,7 +21,7 @@ function calcularDistancia(cepOrigem, cepDestino) {
 }
 
 function calcularVolume(formato, comprimento, altura, largura, diametro) {
-    volume = 0;
+    let volume = 0;
     if (formato === 1) {
         volume = comprimento * altura * largura;
     } else if (formato === 2) {
@@ -44,9 +44,9 @@ function precoSedex() {
 }
 
 function determinaPreco(tipo, distancia, quantidade, peso, formato, volume) {
-    fator = tipo === 1 ? precoPac() : tipo === 2 ? precoSedex() : 0;
+    let fator = tipo === 1 ? precoPac() : tipo === 2 ? precoSedex() : 0;
 
-    preco = fator * distancia * peso * volume * (quantidade * 0.7);
+    let preco = fator * distancia * peso * volume * (quantidade * 0.7);
 
     if (formato === 1) {
         preco *= 0.4;
