@@ -28,7 +28,8 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.3",
-    "sqlite3": "^4.0.0"
+    "sqlite3": "^4.0.0",
+    "uuid": "^3.2.1"
   },
   "engines": {
     "node": "9.11.1"
