@@ -1,19 +1,21 @@
 'use strict';
 module.exports = function(app) {
-  const entrega = require('../controllers/entrega');
-  const pedido = require('../controllers/pedido');
-  const pacote = require('../controllers/pacote');
-  const frete = require('../controllers/frete');
 
-  app.route('/rastrearentrega/:codigoRastreio')
-    .get(entrega.rastrear);
+    const entrega = require('../controllers/entrega');
+    const frete = require('../controllers/frete');
+    const historico = require('../controllers/historico');
 
-  app.route('/rastrearpedido/:idPedido')
-    .get(pedido.rastrear);
+    app.route('/rastrearentrega/:codigoRastreio')
+        .get(entrega.rastrear);
 
-  app.route('/cadastrarpacote')
-    .post(pacote.cadastrar);
+    app.route('/cadastrarentrega')
+        .post(entrega.cadastrar);
 
-  app.route('/calculafrete')
-    .get(frete.calcular);
+    app.route('/inserirhistorico')
+        .post(historico.inserir);
+
+    app.route('/calculafrete')
+        .get(frete.calcular);
+
+
 }

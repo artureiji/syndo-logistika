@@ -2,17 +2,21 @@
 
 const database = require('../services/database');
 
-exports.calcular = function(req, res) {
+exports.calcular = function(tipo, ceporigem, cepdestino, peso, formato, comprimento, altura, largura, diametro) {
     let valor = 0;
-    console.log(req);
-
-    let {tipo, ceporigem, cepdestino, quantidade, peso, formato, comprimento, altura, largura, diametro} = req.query;
-
     let distancia = calcularDistancia(ceporigem, cepdestino);
     let volume = calcularVolume(formato, comprimento, altura, largura, diametro);
 
-    valor = determinaPreco(tipo, distancia, quantidade, peso, formato, volume);
-    
+    valor = determinaPreco(tipo, distancia, peso, formato, volume);
+    return valor
+}
+
+exports.reqCalcular = function(req, res) {
+
+    console.log(req);
+
+    let {tipo, ceporigem, cepdestino, quantidade, peso, formato, comprimento, altura, largura, diametro} = req.query;
+    let valor = exports.calcular(tipo, ceporigem, cepdestino, peso, formato, comprimento, altura, largura, diametro);
     res.send(valor.toFixed(2).toString());
 };
 
@@ -43,10 +47,10 @@ function precoSedex() {
     return 2.0;
 }
 
-function determinaPreco(tipo, distancia, quantidade, peso, formato, volume) {
+function determinaPreco(tipo, distancia, peso, formato, volume) {
     let fator = tipo == 1 ? precoPac() : tipo == 2 ? precoSedex() : 0;
 
-    let preco = fator * distancia * peso * volume * Math.max(((quantidade - 1) + ((quantidade - 1) * 0.7)), 1);
+    let preco = fator * distancia * peso * volume;
 
     return preco;
 }
