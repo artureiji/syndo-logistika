@@ -16,7 +16,7 @@ module.exports = function(app) {
         .post(historico.inserir);
 
     app.route('/calculafrete')
-        .get(frete.calcular);
+        .get(frete.reqCalcular);
 
     app.route('/cadastrarchave')
         .post(chaves.criar);
