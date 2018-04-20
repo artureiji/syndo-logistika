@@ -1,11 +1,6 @@
-const sqlite3 = require('sqlite3');
+const sqlite = require('sqlite');
 
-const com_banco = function(callback) {
-      let db = new sqlite3.Database('./banco.db');
-      console.log('Conectado ao banco');
-      let ret = callback(db);
-      db.close();
-      console.log('Banco fechado');
-};
+const Promise = require('promise');
+const dbPromise = sqlite.open('./banco.db', { Promise });
 
-exports.dbConnection = com_banco;
+exports.promise = dbPromise;

@@ -1,6 +1,7 @@
 'use strict';
 
-const database = require('../services/database');
+const dbPromise = require('../services/database');
+const chaves = require('../controllers/chaves');
 
 exports.inserir = function(req, res) {
     const {
@@ -9,15 +10,17 @@ exports.inserir = function(req, res) {
         data,
         mensagem,
         apiKey
-    } = req.params;
-    database.dbConnection(banco => {
-        banco.run("INSERT INTO Historico values(null,?,?,?,?,?);", [codigoRastreio,endereco,data,mensagem,apiKey],
-            (err, rows) => res.send(
+    } = req.body;
+
+    chaves.checa_key(req, res, () => {
+        dbPromise.promise.then(banco => {
+            banco.run("INSERT INTO Historico values(null,?,?,?,?,?);", [codigoRastreio,endereco,data,mensagem,apiKey])
+            .then(() => res.send(
                 {
-                    status: "ok",
-                    novo_uuid: new_uuid
+                    status: "ok"
                 }
             )
-        );
+            );
+        });
     });
 };
