@@ -8,13 +8,12 @@ exports.inserir = function(req, res) {
         codigoRastreio,
         endereco,
         data,
-        mensagem,
-        apiKey
+        mensagem
     } = req.body;
 
-    chaves.checa_key(req, res, () => {
+    chaves.checa_key(req, res).then((key) => {
         dbPromise.promise.then(banco => {
-            banco.run("INSERT INTO Historico values(null,?,?,?,?,?);", [codigoRastreio,endereco,data,mensagem,apiKey])
+            banco.run("INSERT INTO Historico values(null,?,?,?,?,?);", [codigoRastreio,endereco,data,mensagem,key])
             .then(() => res.send(
                 {
                     status: "ok"

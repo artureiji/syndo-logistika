@@ -6,7 +6,7 @@ const frete = require('./frete');
 const chaves = require('../controllers/chaves');
 
 exports.cadastrar = function(req, res) {
-    chaves.checa_key(req, res, () => {
+    chaves.checa_key(req, res).then((key) => {
         dbPromise.promise.then(banco => {
             const novoId = uuidv1();
             const {
@@ -18,14 +18,14 @@ exports.cadastrar = function(req, res) {
                 tipoPacote,
                 altura,
                 largura,
-                comprimento,
-                apiKey
+                comprimento
             } = req.body;
-            const valor = frete.calcular(tipoEntrega, cepOrigem, cepdecepDestinostino, quantidade, peso, formato, comprimento, altura, largura, diametro);
-            banco.run("INSERT INTO Entrega values(?,?,?,?,?,?,?,?,?,?,?,?);", [novoId,idProduto,tipoEntrega,valor,cepOrigem,cepDestino,peso,tipoPacote,altura,largura,comprimento,apiKey])
+            const valor = frete.calcular(tipoEntrega, cepOrigem, cepDestino, peso, tipoPacote, altura, largura, comprimento);
+            banco.run("INSERT INTO Entrega values(?,?,?,?,?,?,?,?,?,?,?,?);", [novoId,idProduto,tipoEntrega,valor,cepOrigem,cepDestino,peso,tipoPacote,altura,largura,comprimento,key])
             .then(rows => res.send(
                 {
-                    status: "ok"
+                    status: "ok",
+                    codigoRastreio: novoId
                 })
             );
         });
@@ -33,21 +33,23 @@ exports.cadastrar = function(req, res) {
 };
 
 exports.rastrear = function(req, res) {
-    chaves.checa_key(req, res, () => {
+    chaves.checa_key(req, res).then( (key) => {
         dbPromise.promise.then(banco => {
+            console.log(req.params.codigoRastreio, key);
             Promise.all([
-                banco.all("SELECT * FROM Historico where codigo_rastreio = ? ORDER BY data desc;", [req.params.codigoRastreio]),
-                banco.get("SELECT * FROM Entrega where codigo_rastreio = ?", [req.params.codigoRastreio]),
+                banco.all("SELECT * FROM Historico where codigo_rastreio = ? AND api_key = ? ORDER BY data desc;", [req.params.codigoRastreio, key]),
+                banco.get("SELECT * FROM Entrega where codigo_rastreio = ? AND api_key = ?", [req.params.codigoRastreio, key]),
             ]).then(results =>
-                res.send(
+                {console.log(results); return res.send(
                     {
                         status: "ok",
-                        idProduto: results[1].idProduto,
-                        tipoEntrega: results[1].tipoEntrega,
-                        cepOrigem: results[1].cepOrigem,
-                        cepDestino: results[1].cepDestino,
+                        idProduto: results[1].id_produto,
+                        tipoEntrega: results[1].tipo_entrega,
+                        preco: results[1].valor,
+                        cepOrigem: results[1].cep_origem,
+                        cepDestino: results[1].cep_destino,
                         peso: results[1].peso,
-                        tipoPacote: results[1].tipoPacote,
+                        tipoPacote: results[1].tipo_pacote,
                         altura: results[1].altura,
                         largura: results[1].largura,
                         comprimento: results[1].comprimento,
@@ -59,7 +61,7 @@ exports.rastrear = function(req, res) {
                             })
                         )
                     }
-                )
+                );}
             );
         });
     });
