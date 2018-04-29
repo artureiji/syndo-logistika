@@ -4,6 +4,7 @@ const dbPromise = require('../services/database');
 const uuidv1 = require('uuid/v1');
 const frete = require('./frete');
 const chaves = require('../controllers/chaves');
+const historico = require('./historico');
 
 exports.cadastrar = function(req, res) {
     chaves.checa_key(req, res).then((key) => {
@@ -22,12 +23,13 @@ exports.cadastrar = function(req, res) {
             } = req.body;
             const valor = frete.calcular(tipoEntrega, cepOrigem, cepDestino, peso, tipoPacote, altura, largura, comprimento);
             banco.run("INSERT INTO Entrega values(?,?,?,?,?,?,?,?,?,?,?,?);", [novoId,idProduto,tipoEntrega,valor,cepOrigem,cepDestino,peso,tipoPacote,altura,largura,comprimento,key])
-            .then(rows => res.send(
-                {
+            .then(rows => {
+                historico.inserir(novoId, "Central de postagem de Barão Geraldo", (new Date()).toISOString(), "Aguardando Processamento", chaves.rootKey);
+                return res.send({
                     status: "ok",
                     codigoRastreio: novoId
-                })
-            );
+                });
+            });
         });
     });
 };
@@ -35,7 +37,6 @@ exports.cadastrar = function(req, res) {
 exports.rastrear = function(req, res) {
     chaves.checa_key(req, res).then( (key) => {
         dbPromise.promise.then(banco => {
-            console.log(req.params.codigoRastreio, key);
             Promise.all([
                 banco.all("SELECT * FROM Historico where codigo_rastreio = ? AND api_key = ? ORDER BY data desc;", [req.params.codigoRastreio, key]),
                 banco.get("SELECT * FROM Entrega where codigo_rastreio = ? AND api_key = ?", [req.params.codigoRastreio, key]),

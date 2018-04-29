@@ -13,7 +13,7 @@ module.exports = function(app) {
         .post(entrega.cadastrar);
 
     app.route('/inserirhistorico')
-        .post(historico.inserir);
+        .post(historico.inserir_req);
 
     app.route('/calculafrete')
         .get(frete.reqCalcular);

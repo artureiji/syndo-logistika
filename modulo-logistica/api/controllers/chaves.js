@@ -3,13 +3,14 @@
 const dbPromise = require('../services/database');
 const uuidv5 = require('uuid/v5');
 
+exports.rootKey = '1a597a3d-8b4a-4b54-99c3-f1a2eabdb2ff';
+
 exports.criar = function(req, res) {
-    const our_uuid = '1a597a3d-8b4a-4b54-99c3-f1a2eabdb2ff';
-    if(req.body.apiKey !== our_uuid) {
+    if(req.body.apiKey !== rootKey) {
         res.send({ status: "unauthorized" });
     } else {
         dbPromise.promise.then(banco => {
-            const new_uuid = uuidv5(req.body.ownerName, our_uuid);
+            const new_uuid = uuidv5(req.body.ownerName, rootKey);
 
             banco.run("INSERT INTO Chaves values(?,?);", [new_uuid,req.body.ownerName])
 
