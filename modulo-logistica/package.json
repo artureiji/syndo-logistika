@@ -23,12 +23,14 @@
   },
   "homepage": "https://github.com/artureiji/syndo-logistika#readme",
   "devDependencies": {
+    "heroku": "^7.0.29",
     "nodemon": "^1.17.3"
   },
   "dependencies": {
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
     "express": "^4.16.3",
+    "pg": "^7.4.3",
     "promise": "^8.0.1",
     "sqlite": "^2.9.1",
     "uuid": "^3.2.1"

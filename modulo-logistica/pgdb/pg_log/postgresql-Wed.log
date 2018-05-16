@@ -1,0 +1,49 @@
+LOG:  database system was shut down at 2018-05-07 17:52:59 -03
+LOG:  MultiXact member wraparound protections are now enabled
+LOG:  database system is ready to accept connections
+LOG:  autovacuum launcher started
+LOG:  received fast shutdown request
+LOG:  aborting any active transactions
+LOG:  autovacuum launcher shutting down
+LOG:  shutting down
+LOG:  database system is shut down
+LOG:  database system was shut down at 2018-05-16 17:05:57 -03
+LOG:  MultiXact member wraparound protections are now enabled
+LOG:  autovacuum launcher started
+LOG:  database system is ready to accept connections
+FATAL:  database "ra138923" does not exist
+FATAL:  database "pgdb" does not exist
+ERROR:  syntax error at or near "exit" at character 1
+STATEMENT:  exit
+	quit
+	;
+ERROR:  syntax error at or near "exit" at character 1
+STATEMENT:  exit;
+ERROR:  syntax error at or near "quit" at character 1
+STATEMENT:  quit;
+ERROR:  syntax error at or near ";" at character 39
+STATEMENT:  SELECT * FROM Chaves WHERE api_key = ?;
+ERROR:  syntax error at end of input at character 39
+STATEMENT:  SELECT * FROM Chaves WHERE api_key = ?
+ERROR:  syntax error at end of input at character 39
+STATEMENT:  SELECT * FROM Chaves WHERE api_key = ?
+LOG:  incomplete startup packet
+ERROR:  syntax error at end of input at character 39
+STATEMENT:  SELECT * FROM Chaves WHERE api_key = ?
+ERROR:  syntax error at or near "AND" at character 51
+STATEMENT:  SELECT * FROM Historico where codigo_rastreio = ? AND api_key = ? ORDER BY data desc
+ERROR:  syntax error at or near "AND" at character 49
+STATEMENT:  SELECT * FROM Entrega where codigo_rastreio = ? AND api_key = ?
+ERROR:  syntax error at or near "," at character 29
+STATEMENT:  INSERT INTO Entrega values(?,?,?,?,?,?,?,?,?,?,?,?);
+ERROR:  null value in column "id" violates not-null constraint
+DETAIL:  Failing row contains (null, 0a3516e0-594f-11e8-a573-033864bb1674, Central de postagem de Barão Geraldo, 2018-05-16, Aguardando Processamento, 1a597a3d-8b4a-4b54-99c3-f1a2eabdb2ff).
+STATEMENT:  INSERT INTO Historico values(null,$1,$2,$3,$4,$5)
+ERROR:  duplicate key value violates unique constraint "historico_pkey"
+DETAIL:  Key (id)=(1) already exists.
+STATEMENT:  INSERT INTO Historico values(DEFAULT,$1,$2,$3,$4,$5)
+LOG:  received fast shutdown request
+LOG:  aborting any active transactions
+LOG:  autovacuum launcher shutting down
+LOG:  shutting down
+LOG:  database system is shut down

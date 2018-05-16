@@ -1,6 +1,11 @@
-const sqlite = require('sqlite');
+const { Client } = require('pg');
 
-const Promise = require('promise');
-const dbPromise = sqlite.open('./banco.db', { Promise });
 
-exports.promise = dbPromise;
+
+const db_connection = process.env.DATABASE_URL?
+    {connectionString: process.env.DATABASE_URL, ssl:true, database: 'postgres' } :
+    {host: '/home/cc2012/ra138923/syndo-logistika/modulo-logistica/pgdb/', database: 'postgres'};
+const client = new Client(db_connection);
+client.connect();
+
+exports.client = client;
