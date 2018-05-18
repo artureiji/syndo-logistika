@@ -23,11 +23,11 @@ exports.cadastrar = function(req, res) {
         const valor = frete.calcular(tipoEntrega, cepOrigem, cepDestino, peso, tipoPacote, altura, largura, comprimento);
         db.client.query("INSERT INTO Entrega values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)", [novoId,idProduto,tipoEntrega,valor,cepOrigem,cepDestino,peso,tipoPacote,altura,largura,comprimento,key])
         .then(rows => {
-            historico.inserir(novoId, "Central de postagem de Barão Geraldo", (new Date()).toISOString(), "Aguardando Processamento", chaves.rootKey);
-            return res.send({
-                status: "ok",
-                codigoRastreio: novoId
-            });
+            return historico.inserir(novoId, "Central de postagem de Barão Geraldo", (new Date()).toISOString(), "Aguardando Processamento", chaves.rootKey)
+                .then(() => res.send({
+                    status: "ok",
+                    codigoRastreio: novoId
+                }));
         });
     });
 };
@@ -36,10 +36,10 @@ exports.rastrear = function(req, res) {
     chaves.checa_key(req, res).then( (key) => {
         console.log("checou key", key);
         Promise.all([
-            db.client.query("SELECT * FROM Historico where codigo_rastreio = $1 AND api_key = $2 ORDER BY data desc", [req.params.codigoRastreio, key]),
+            db.client.query("SELECT * FROM Historico where codigo_rastreio = $1 ORDER BY data desc", [req.params.codigoRastreio]),
             db.client.query("SELECT * FROM Entrega where codigo_rastreio = $1 AND api_key = $2", [req.params.codigoRastreio, key]),
         ]).then(results =>
-            {return res.send(
+            {console.log(results);return res.send(
                 {
                     status: "ok",
                     idProduto: results[1].rows[0].id_produto,

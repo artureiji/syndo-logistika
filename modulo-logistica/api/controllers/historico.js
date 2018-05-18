@@ -11,16 +11,14 @@ exports.inserir_req = function(req,res) {
         mensagem
     } = req.body;
     chaves.checa_key(req, res).then((key) => {
-        inserir(codigoRastreio, endereco, data, mensagem, key);
+        exports.inserir(codigoRastreio, endereco, data, mensagem, key).then(() => res.send(
+            {
+                status: "ok"
+            }
+        ));
     });
 };
 
 exports.inserir = function(codigoRastreio, endereco, data, mensagem, apiKey) {
-    db.client.query("INSERT INTO Historico values(DEFAULT,$1,$2,$3,$4,$5)", [codigoRastreio,endereco,data,mensagem,apiKey])
-    .then(() => res.send(
-        {
-            status: "ok"
-        }
-    )
-    );
+    return db.client.query("INSERT INTO Historico values(DEFAULT,$1,$2,$3,$4,$5)", [codigoRastreio,endereco,new Date(data),mensagem,apiKey]);
 };
