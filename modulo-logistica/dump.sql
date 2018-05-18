@@ -1,9 +1,9 @@
 --PRAGMA foreign_keys=OFF;
 BEGIN TRANSACTION;
-DROP TABLE Entrega;
-DROP TABLE Historico;
-DROP TABLE Distancia;
-DROP TABLE Chaves;
+DROP TABLE IF EXISTS Entrega;
+DROP TABLE IF EXISTS Historico;
+DROP TABLE IF EXISTS Distancia;
+DROP TABLE IF EXISTS Chaves;
 CREATE TABLE Entrega (codigo_rastreio VARCHAR(36) PRIMARY KEY, id_produto VARCHAR(255), tipo_entrega VARCHAR(20), valor INT, cep_origem VARCHAR(9), cep_destino VARCHAR(9), peso INT, tipo_pacote VARCHAR(10), altura INT, largura INT, comprimento INT, api_key VARCHAR(36));
 INSERT INTO Entrega VALUES('415ceb70-4a5e-11e8-a52b-37e07bdcba6d','62345','PAC',1600,'13330-000','13330-000',1000,'Caixa',10,10,10,'17b8e5f4-5fb6-593c-bf02-cdf57eab0c69');
 CREATE TABLE Historico (id SERIAL PRIMARY KEY, codigo_rastreio VARCHAR(36), endereco VARCHAR(50), data timestamptz, mensagem VARCHAR(100), api_key VARCHAR(36));
