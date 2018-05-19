@@ -1,28 +1,39 @@
 'use strict';
 
-const database = require('../services/database');
+const db = require('../services/database');
+const endereco = require('../services/endereco');
 
 exports.calcular = function(tipoEntrega, cepOrigem, cepDestino, peso, tipoPacote, altura, largura, comprimento) {
     let valor = 0;
+    return Promise.all([endereco.consulta_cep(cepOrigem), endereco.consulta_cep(cepDestino)])
+        .then((results) => {
+            console.log(results[0], results[1]);
 
-    let distancia = calcularDistancia(cepOrigem, cepDestino);
+            return calcularDistancia(JSON.parse(results[0]).uf, JSON.parse(results[1]).uf)
+                .then(distancia => {
+                    let volume = calcularVolume(tipoPacote, comprimento, altura, largura);
 
-    let volume = calcularVolume(tipoPacote, comprimento, altura, largura);
+                    valor = determinaPreco(tipoEntrega, distancia, peso, tipoPacote, volume);
 
-    valor = determinaPreco(tipoEntrega, distancia, peso, tipoPacote, volume);
+                    return valor.toString();
+                });
 
-    return valor;
+
+        } );
 }
 
 exports.reqCalcular = function(req, res) {
 
     let {tipoEntrega, cepOrigem, cepDestino, peso, tipoPacote, altura, largura, comprimento} = req.query;
-    let valor = exports.calcular(tipoEntrega, cepOrigem, cepDestino, peso, tipoPacote, altura, largura, comprimento);
-    res.send({preco: valor.toString()});
+
+    exports.calcular(tipoEntrega, cepOrigem, cepDestino, peso, tipoPacote, altura, largura, comprimento)
+        .then((valor)=> res.send({preco: valor}));
 };
 
-function calcularDistancia(cepOrigem, cepDestino) {
-    return 1;
+function calcularDistancia(ufOrigem, ufDestino) {
+    console.log(ufOrigem,ufDestino);
+    return db.client.query("select distancia from distancia where uf_origem = $1 AND uf_destino=$2", [ufOrigem,ufDestino])
+        .then(rows => rows.rows[0].distancia)
 }
 
 function calcularVolume(formato, comprimento, altura, largura) {
@@ -51,9 +62,9 @@ function determinaPreco(tipo, distancia, peso, formato, volume) {
     console.log(tipo, distancia, peso, formato, volume);
     switch(tipo) {
         case "PAC":
-            return Math.round(500+ (peso / 1 + volume / 10)); // 1Kg = R$10, 10x10x10cm = R$1
+            return Math.round(400+ (peso / 1 + volume / 10) + (distancia+1)*100); // 1Kg = R$10, 10x10x10cm = R$1
         case "SEDEX":
-            return Math.round(1500 + 1.3*(peso/10 + volume / 10000));
+            return Math.round(1000 + 1.3*(peso/10 + volume / 10000) + (distancia+1)*500);
         default:
             return -1;
     }
