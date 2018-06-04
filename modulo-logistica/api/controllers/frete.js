@@ -4,7 +4,6 @@ const db = require('../services/database');
 const endereco = require('../services/endereco');
 
 exports.calcular = function(tipoEntrega, cepOrigem, cepDestino, peso, tipoPacote, altura, largura, comprimento) {
-    let valor = 0;
     return Promise.all([endereco.consulta_cep(cepOrigem), endereco.consulta_cep(cepDestino)])
         .then((results) => {
             console.log(results[0], results[1]);
@@ -13,9 +12,10 @@ exports.calcular = function(tipoEntrega, cepOrigem, cepDestino, peso, tipoPacote
                 .then(distancia => {
                     let volume = calcularVolume(tipoPacote, comprimento, altura, largura);
 
-                    valor = determinaPreco(tipoEntrega, distancia, peso, tipoPacote, volume);
+                    let valor = determinaPreco(tipoEntrega, distancia, peso, tipoPacote, volume);
+                    let prazo = determinaPrazo(tipoEntrega, distancia);
 
-                    return valor.toString();
+                    return {preco: valor.toString(), prazo: prazo.toString()};
                 });
 
 
@@ -27,7 +27,7 @@ exports.reqCalcular = function(req, res) {
     let {tipoEntrega, cepOrigem, cepDestino, peso, tipoPacote, altura, largura, comprimento} = req.query;
 
     exports.calcular(tipoEntrega, cepOrigem, cepDestino, peso, tipoPacote, altura, largura, comprimento)
-        .then((valor)=> res.send({preco: valor}));
+        .then((frete)=> res.send(frete));
 };
 
 function calcularDistancia(ufOrigem, ufDestino) {
@@ -64,7 +64,18 @@ function determinaPreco(tipo, distancia, peso, formato, volume) {
         case "PAC":
             return Math.round(400+ (peso / 1 + volume / 10) + (distancia+1)*100); // 1Kg = R$10, 10x10x10cm = R$1
         case "SEDEX":
-            return Math.round(1000 + 1.3*(peso/10 + volume / 10000) + (distancia+1)*500);
+            return Math.round(1000 + 1.3*(peso/1 + volume / 10) + (distancia+1)*500);
+        default:
+            return -1;
+    }
+}
+
+function determinaPrazo(tipo, distancia) {
+    switch(tipo) {
+        case "PAC":
+            return Math.round((distancia+1) / 3000 + 10);
+        case "SEDEX":
+            return Math.round((distancia+1) / 1000 + 3);
         default:
             return -1;
     }
