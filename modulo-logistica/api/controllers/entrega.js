@@ -20,15 +20,19 @@ exports.cadastrar = function(req, res) {
             largura,
             comprimento
         } = req.body;
-        const valor = frete.calcular(tipoEntrega, cepOrigem, cepDestino, peso, tipoPacote, altura, largura, comprimento);
-        db.client.query("INSERT INTO Entrega values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)", [novoId,idProduto,tipoEntrega,valor,cepOrigem,cepDestino,peso,tipoPacote,altura,largura,comprimento,key])
-        .then(rows => {
-            return historico.inserir(novoId, "Central de postagem de Barão Geraldo", (new Date()).toISOString(), "Aguardando Processamento", chaves.rootKey)
-                .then(() => res.send({
-                    status: "ok",
-                    codigoRastreio: novoId
-                }));
-        });
+        frete.calcular(tipoEntrega, cepOrigem, cepDestino, peso, tipoPacote, altura, largura, comprimento)
+        .then(calcFrete => {
+            db.client.query("INSERT INTO Entrega values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)", [novoId,idProduto,tipoEntrega,calcFrete.preco,cepOrigem,cepDestino,peso,tipoPacote,altura,largura,comprimento,key])
+            .then(rows => {
+                return historico.inserir(novoId, "Central de postagem de Barão Geraldo", (new Date()).toISOString(), "Aguardando Processamento", chaves.rootKey)
+                    .then(() => res.send({
+                        status: "ok",
+                        codigoRastreio: novoId
+                    }));
+            });
+        })
+        .catch(error => res.status(error.status).send({message: error.message}));
+
     });
 };
 

@@ -19,7 +19,11 @@ exports.calcular = function(tipoEntrega, cepOrigem, cepDestino, peso, tipoPacote
                 });
 
 
-        } );
+        } )
+        .catch(error => {
+            if( error.statusCode === 404) throw {message: "CEP Inválido", status: 404};
+            throw {message: "Erro desconhecido", status: 500};
+        });
 }
 
 exports.reqCalcular = function(req, res) {
@@ -27,7 +31,7 @@ exports.reqCalcular = function(req, res) {
     let {tipoEntrega, cepOrigem, cepDestino, peso, tipoPacote, altura, largura, comprimento} = req.query;
 
     exports.calcular(tipoEntrega, cepOrigem, cepDestino, peso, tipoPacote, altura, largura, comprimento)
-        .then((frete)=> res.send(frete));
+        .then((frete)=> res.send(frete)).catch(error => res.status(error.status).send({message: error.message}));
 };
 
 function calcularDistancia(ufOrigem, ufDestino) {
