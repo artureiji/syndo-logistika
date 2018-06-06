@@ -34,6 +34,15 @@ exports.reqCalcular = function(req, res) {
         .then((frete)=> res.send(frete)).catch(error => res.status(error.status).send({message: error.message}));
 };
 
+exports.reqCalcularTodosTipos = function(req, res) {
+    let {cepOrigem, cepDestino, peso, tipoPacote, altura, largura, comprimento} = req.query;
+    return Promise.all([
+        exports.calcular("PAC", cepOrigem, cepDestino, peso, tipoPacote, altura, largura, comprimento),
+        exports.calcular("SEDEX", cepOrigem, cepDestino, peso, tipoPacote, altura, largura, comprimento)
+    ]).then((results)=> res.send({pac: results[0], sedex: results[1]}))
+    .catch(error => res.status(error.status).send({message: error.message}));
+}
+
 function calcularDistancia(ufOrigem, ufDestino) {
     console.log(ufOrigem,ufDestino);
     return db.client.query("select distancia from distancia where uf_origem = $1 AND uf_destino=$2", [ufOrigem,ufDestino])

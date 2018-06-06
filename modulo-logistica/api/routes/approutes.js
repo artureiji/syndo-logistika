@@ -17,9 +17,10 @@ module.exports = function(app) {
 
     app.route('/calculafrete')
         .get(frete.reqCalcular);
+    app.route('/calculatodosfretes')
+        .get(frete.reqCalcularTodosTipos);
 
     app.route('/cadastrarchave')
         .post(chaves.criar);
-
 
 }
